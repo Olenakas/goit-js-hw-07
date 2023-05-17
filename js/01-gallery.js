@@ -43,7 +43,6 @@ function onClick(event) {
     }
   }
 }
-
 // Change code below this line
 
 console.log(galleryItems);
