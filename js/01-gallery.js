@@ -19,6 +19,9 @@ const markup = galleryItems.map(
 container.insertAdjacentHTML("beforeend", markup.join(""));
 
 container.addEventListener("click", onClick);
+
+let instance;
+
 function onClick(event) {
   event.preventDefault();
   const { target } = event;
@@ -28,22 +31,30 @@ function onClick(event) {
 
   const largeImageUrl = target.dataset.source;
 
-  const instance = basicLightbox.create(`
+  instance = basicLightbox.create(
+    `
         <img src="${largeImageUrl}" alt="${target.alt}" />
-      `);
-  instance.show();
-
-  document.addEventListener("keydown", onEscKeyPress);
-
-  function onEscKeyPress(event) {
-    const ESC_KEY_CODE = "Escape";
-    const isEscey = event.code === ESC_KEY_CODE;
-    if (isEscey) {
-      instance.close();
+      `,
+    {
+      onShow: () => {
+        document.addEventListener("keydown", onEscKeyPress);
+      },
+      onClose: () => {
+        document.removeEventListener("keydown", onEscKeyPress);
+      },
     }
+  );
+
+  instance.show();
+}
+
+function onEscKeyPress(event) {
+  const ESC_KEY_CODE = "Escape";
+  const isEscape = event.code === ESC_KEY_CODE;
+  if (isEscape && instance) {
+    instance.close();
   }
 }
 
 // Change code below this line
-
 console.log(galleryItems);
